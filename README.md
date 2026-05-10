@@ -40,7 +40,7 @@
 
 ## 分工
 
-| 人員 | 主要負責 | 具體工作 | Repo |
+|   人員   | 主要負責 | 具體工作 | Repo |
 |------|----------|----------|------|
 | 黃教丞 | AI 辨識 + 資料整理 | 收集垃圾圖片、訓練 / 測試模型、攝影機辨識垃圾、輸出辨識結果 | [`vision`](https://github.com/AI-Enabled-Emotional-GarbageCane/vision) |
 | 張世鵬 | 硬體感測 + 互動裝置 | 紅外線 / 距離感測、喇叭 / 螢幕 / LED、垃圾桶觸發流程 | [`firmware`](https://github.com/AI-Enabled-Emotional-GarbageCane/firmware) |
