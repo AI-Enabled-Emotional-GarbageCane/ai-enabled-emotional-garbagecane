@@ -33,15 +33,15 @@
 
 | Repo | 內容 |
 |------|------|
-| [`ai-enabled-emotional-garbagecane`](https://github.com/AI-Enabled-Emotional-GarbageCane/ai-enabled-emotional-garbagecane)(本 repo) | Monorepo:系統整合、文件 (`docs/`)、整體說明 |
-| [`ai`](https://github.com/AI-Enabled-Emotional-GarbageCane/ai) | AI 辨識 + 資料整理 |
-| [`hardware`](https://github.com/AI-Enabled-Emotional-GarbageCane/hardware) | 硬體感測 + 互動裝置 |
-| [`ui`](https://github.com/AI-Enabled-Emotional-GarbageCane/ui) | 系統整合 + UI / 報告 |
+| [`ai-enabled-emotional-garbagecane`](https://github.com/AI-Enabled-Emotional-GarbageCane/ai-enabled-emotional-garbagecane)(本 repo) | Monorepo:整體說明、文件 (`docs/`)、跨 repo 整合 |
+| [`vision`](https://github.com/AI-Enabled-Emotional-GarbageCane/vision) | AI 影像辨識 + 資料整理 |
+| [`firmware`](https://github.com/AI-Enabled-Emotional-GarbageCane/firmware) | 硬體感測(紅外線 / 距離)+ 互動裝置(喇叭 / LED / 機構) |
+| [`display`](https://github.com/AI-Enabled-Emotional-GarbageCane/display) | 顯示 UI + 互動畫面 + 報告 |
 
 ## 分工
 
 | 人員 | 主要負責 | 具體工作 | Repo |
 |------|----------|----------|------|
-| TBD | AI 辨識 + 資料整理 | 收集垃圾圖片、訓練 / 測試模型、紅外線 / 距離感測、攝影機辨識垃圾、輸出辨識結果 | [`ai`](https://github.com/AI-Enabled-Emotional-GarbageCane/ai) |
-| TBD | 硬體感測 + 互動裝置 | 喇叭 / 螢幕 / LED、垃圾桶觸發流程 | [`hardware`](https://github.com/AI-Enabled-Emotional-GarbageCane/hardware) |
-| TBD | 系統整合 + UI / 報告 | 把 AI 結果接到畫面 / 語音、設計互動畫面、整理 README、簡報與影片 Demo | [`ui`](https://github.com/AI-Enabled-Emotional-GarbageCane/ui)、本 repo `docs/` |
+| TBD | AI 辨識 + 資料整理 | 收集垃圾圖片、訓練 / 測試模型、攝影機辨識垃圾、輸出辨識結果 | [`vision`](https://github.com/AI-Enabled-Emotional-GarbageCane/vision) |
+| TBD | 硬體感測 + 互動裝置 | 紅外線 / 距離感測、喇叭 / 螢幕 / LED、垃圾桶觸發流程 | [`firmware`](https://github.com/AI-Enabled-Emotional-GarbageCane/firmware) |
+| TBD | 系統整合 + UI / 報告 | 把 AI 結果接到畫面 / 語音、設計互動畫面、整理 README、簡報與影片 Demo | [`display`](https://github.com/AI-Enabled-Emotional-GarbageCane/display)、本 repo `docs/` |
