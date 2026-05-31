@@ -1,0 +1,148 @@
+{
+  "contract_version": "v0.2",
+  "status": "finalized",
+  "source_repo": "https://github.com/AI-Enabled-Emotional-GarbageCane/ai-enabled-emotional-garbagecane",
+  "runtime": {
+    "target": "Jetson AGX Orin Nano",
+    "topology": "single_host_multi_process"
+  },
+  "transport": {
+    "type": "python_multiprocessing_queue",
+    "launcher_owns_queues": true
+  },
+  "modules": {
+    "firmware": {
+      "owns": [
+        "d435_depth_distance_detection",
+        "led_feedback",
+        "event:user_detected"
+      ],
+      "consumes": [],
+      "must_not_own": [
+        "model_inference",
+        "display_ui",
+        "voice_playback",
+        "user_confirmation_flow"
+      ]
+    },
+    "vision": {
+      "owns": [
+        "d435_rgb_capture",
+        "yolo_inference",
+        "event:recognition_result"
+      ],
+      "consumes": [
+        "event:user_detected"
+      ],
+      "must_not_own": [
+        "voice_playback",
+        "display_ui",
+        "led_feedback"
+      ]
+    },
+    "display": {
+      "owns": [
+        "state_machine",
+        "voice_feedback",
+        "admin_panel",
+        "public_display",
+        "event_log"
+      ],
+      "consumes": [
+        "event:recognition_result"
+      ],
+      "must_not_own": [
+        "model_inference",
+        "d435_depth_distance_detection",
+        "public_display_to_firmware_flow"
+      ]
+    }
+  },
+  "events": [
+    {
+      "name": "user_detected",
+      "queue": "q_detected",
+      "direction": "firmware->vision",
+      "producer": "firmware",
+      "consumer": "vision",
+      "required_fields": [
+        "event",
+        "distance_cm",
+        "ts"
+      ],
+      "payload": {
+        "event": {
+          "const": "user_detected"
+        },
+        "distance_cm": {
+          "type": "number"
+        },
+        "ts": {
+          "type": "iso8601_local_time"
+        }
+      }
+    },
+    {
+      "name": "recognition_result",
+      "queue": "q_result",
+      "direction": "vision->display",
+      "producer": "vision",
+      "consumer": "display",
+      "required_fields": [
+        "event",
+        "class",
+        "confidence",
+        "num_objects",
+        "snapshot_path",
+        "ts"
+      ],
+      "payload": {
+        "event": {
+          "const": "recognition_result"
+        },
+        "class": {
+          "enum": [
+            "accept",
+            "reject"
+          ]
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "num_objects": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "snapshot_path": {
+          "type": "string"
+        },
+        "ts": {
+          "type": "iso8601_local_time"
+        }
+      }
+    }
+  ],
+  "behavioral_invariants": {
+    "fully_automatic": true,
+    "user_button": false,
+    "lid_mechanism": false,
+    "display_to_firmware_public_flow": false,
+    "class_values": [
+      "accept",
+      "reject"
+    ],
+    "confidence_threshold": 0.5,
+    "low_confidence_behavior": "play_self_mock_voice_without_accept_or_reject",
+    "multi_object_policy": "num_objects_gt_1_reject"
+  },
+  "forbidden_cross_repo_changes": [
+    "rename_queue_without_contract_upgrade",
+    "rename_event_without_contract_upgrade",
+    "remove_required_payload_field_without_contract_upgrade",
+    "add_display_to_firmware_public_flow_without_contract_upgrade",
+    "add_user_confirmation_button_without_contract_upgrade",
+    "add_lid_mechanism_without_contract_upgrade"
+  ]
+}

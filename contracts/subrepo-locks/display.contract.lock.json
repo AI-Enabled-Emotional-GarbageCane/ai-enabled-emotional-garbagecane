@@ -1,0 +1,17 @@
+{
+  "contract_version": "v0.2",
+  "source_repo": "https://github.com/AI-Enabled-Emotional-GarbageCane/ai-enabled-emotional-garbagecane",
+  "source_commit": "pending-center-contract-commit",
+  "module": "display",
+  "owned_events": [],
+  "consumed_events": [
+    "recognition_result"
+  ],
+  "forbidden_cross_repo_changes": [
+    "rename q_result",
+    "ignore required recognition_result payload fields",
+    "add public display-to-firmware flow",
+    "add user confirmation button or lid mechanism to the public contract",
+    "take ownership of model inference or D435 depth trigger"
+  ]
+}
