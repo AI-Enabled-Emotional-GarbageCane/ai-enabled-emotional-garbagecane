@@ -6,11 +6,13 @@
 
 | 項目 | 目前事實 |
 |---|---|
-| Contract version | `v0.2` |
+| Contract version | `v0.3` |
 | Human-readable contract | `docs/api-contract.md` |
-| Machine-readable contract | `contracts/contract.v0.2.json` |
+| Machine-readable contract | `contracts/contract.v0.3.json` |
 | Governance model | 中央契約優先；子 repo 以 `contract.lock.json` 鎖定版本 |
 | Runtime target | Jetson AGX Orin Nano，同機多 process |
+| RGB-D camera | Intel RealSense L515 |
+| Vision model | YOLOv11n binary classification |
 | Transport | Python `multiprocessing.Queue` |
 
 ## Module Boundaries
@@ -18,7 +20,7 @@
 | Module | Owns | Consumes | Must not own |
 |---|---|---|---|
 | `firmware` | L515 depth 距離感測、LED、`user_detected` | 無跨 repo event | 模型推論、UI、語音、使用者確認流程 |
-| `vision` | L515 camera 輸入、YOLO 推論、`recognition_result` | `user_detected` | 語音、UI、LED、硬體互動 |
+| `vision` | L515 RGB 串流、YOLOv11n binary classification、`recognition_result` | `user_detected` | 語音、UI、LED、硬體互動 |
 | `display` | 狀態機、roast/accept 語音、公告螢幕、admin panel、事件紀錄 | `recognition_result` | 模型推論、L515 depth 感測、public `display -> firmware` flow |
 
 ## Event Contract
@@ -32,11 +34,11 @@
 
 - `class` 只允許 `accept` 或 `reject`。
 - `confidence >= 0.5` 時直接判定 `accept` 或 `reject`。
-- `confidence < 0.5` 時播放自嘲語音，不做 accept/reject 判定。
-- `num_objects > 1` 直接判定 `reject`。
+- `confidence < 0.5` 時，`vision` 仍送最佳猜測的 `class`，`display` 播放自嘲語音且不採用該 class 做 accept/reject 判定。
+- v0.3 `vision` v1 固定輸出 `num_objects=1`；`num_objects > 1` 的 reject 規則保留給未來 detection / foreground estimation 版本。
 - 系統全自動，無使用者按鈕。
-- v0.2 不做蓋子機構。
-- v0.2 不存在 public `display -> firmware` 通訊。
+- v0.3 不做蓋子機構。
+- v0.3 不存在 public `display -> firmware` 通訊。
 
 ## Drift Policy
 

@@ -2,6 +2,8 @@
 
 > 對既有分工的 review、調整建議，以及 1-2 個月期末時程規劃。
 
+本章以 v0.3 契約為分工基準：L515、YOLOv11n、`q_detected`、`q_result`、全自動流程。
+
 ## 5.1 對既有分工的 review
 
 ### 既有分工（README）
@@ -33,7 +35,7 @@
 
 | 人員 | 主要負責 | 具體工作 | Repo |
 |---|---|---|---|
-| TBD | **Vision／模型** | 整理 TrashNet + RealWaste 資料集；fine-tune YOLOv8n（binary: accept/reject）；輸出 `{class, confidence, num_objects, snapshot_path}`；準確率測試報告 | `vision` |
+| TBD | **Vision／模型** | 整理 TrashNet + RealWaste 資料集；fine-tune YOLOv11n（binary: accept/reject）；輸出 `{class, confidence, num_objects, snapshot_path}`；準確率測試報告 | `vision` |
 | TBD | **Firmware／感測** | L515 depth 距離感測；LED 燈號；透過 Queue 送 `user_detected` 給 vision | `firmware` |
 | TBD | **Display／整合／UX** | 狀態機；roast 語音播放器（含音效設計）；admin 控制面板；使用者公告螢幕；事件紀錄（本機 JSON log + 照片）；接 vision Queue；**統籌錄音與台詞庫** | `display` |
 | 全員 | **錄音、台詞** | 每人至少寫並錄 5 句 roast | （音檔放在 `display/assets/audio/`） |
@@ -55,8 +57,8 @@ W1 ──┬── W2 ──┬── W3 ──┬── W4 ──┬── W5 �
 | Owner | 任務 |
 |---|---|
 | 全員 | 確認本份 docs/ 的 §1-§5 內容、簽收 |
-| 全員 | 確認硬體取得方案（Jetson AGX Orin Nano 已確定；L515 若取得或 driver 設定卡關則備案 USB Webcam + HC-SR04） |
-| Vision | 下載 TrashNet + RealWaste，跑出 baseline（不調參）的準確率 |
+| 全員 | 確認硬體取得方案（Jetson AGX Orin Nano 已確定；L515 若借不到則備案 USB Webcam + HC-SR04） |
+| Vision | 下載 TrashNet + RealWaste，跑出 baseline（不調參）的準確率；規劃 L515 實拍每類 50-100 張 |
 | Display | admin 面板 + 公告螢幕 mockup（Figma 或紙本）；roast 台詞模板 v0 |
 
 **Phase 1 出口指標**：每個人都知道自己第 W3 開始要做什麼。
@@ -65,7 +67,7 @@ W1 ──┬── W2 ──┬── W3 ──┬── W4 ──┬── W5 �
 
 | Owner | 任務 |
 |---|---|
-| Vision | YOLOv8n fine-tune（binary: accept/reject）；準確率 ≥ 85% on test set；輸出可呼叫的 inference function |
+| Vision | YOLOv11n classification fine-tune（binary: accept/reject）；準確率 ≥ 85% on test set；輸出可呼叫的 inference function |
 | Firmware | L515 depth 距離感測可運作；LED 控制可運作；可透過 Queue 送 `user_detected` |
 | Display | 狀態機可手動觸發（給 mock 資料）；roast 語音播放器可工作；台詞庫 v1（每類 3 句） |
 | 全員 | **W4 結束前完成全員錄音第一輪**（roast 台詞 v1） |
@@ -78,7 +80,7 @@ W1 ──┬── W2 ──┬── W3 ──┬── W4 ──┬── W5 �
 |---|---|
 | Display | 把 vision Queue 接到狀態機；把 firmware Queue 接進來；三個 process 聯合啟動測試 |
 | Vision | 把 model 部署到 Jetson AGX Orin Nano（TensorRT engine）；測 latency |
-| Firmware | L515 depth 感測與 vision camera 串流同時運行的穩定性測試；LED 固定在桶子上 |
+| Firmware | L515 depth 感測與 vision RGB 串流同時運行的穩定性測試；LED 固定在桶子上 |
 | 全員 | 第一次 end-to-end demo（W5 結束）；找 5-10 個同學試丟，紀錄 bug |
 | 全員 | 根據 bug 與台詞反饋，做 W6 的修正 |
 
@@ -100,8 +102,8 @@ W1 ──┬── W2 ──┬── W3 ──┬── W4 ──┬── W5 �
 
 | 風險 | 機率 | 影響 | 緩解 |
 |---|---|---|---|
-| Jetson 環境（JetPack/TensorRT）配置卡關 | 中 | 高 | 於 Phase 1 結束前完成 JetPack 安裝與 YOLOv8n TensorRT 編譯驗證；臨時退路為直接於筆電執行推論 demo |
-| L515 camera 取得或 driver 設定卡關 | 中 | 中 | 備案：USB Webcam（RGB only）+ HC-SR04 超音波替代 demo 距離偵測 |
+| Jetson 環境（JetPack/TensorRT）配置卡關 | 中 | 高 | 於 Phase 1 結束前完成 JetPack 安裝與 YOLOv11n TensorRT 編譯驗證；臨時退路為直接於筆電執行推論 demo |
+| L515 深度鏡頭借不到 | 中 | 中 | 備案：USB Webcam（RGB only）+ HC-SR04 超音波替代距離偵測 |
 | 錄音時組員不敢罵 | 高 | 中 | 由 display 負責人寫好台詞，組員只負責念；先錄「中度版」再決定要不要加重 |
 | 老師質疑「辱罵」教育意義 | 中 | 高 | §4.2 學術論證直接搬到簡報前三頁 |
 | 期中報告與期末報告打架 | 高 | 中 | Phase 1 結束（W2）剛好可以交期中提案 |
@@ -117,6 +119,6 @@ W1 ──┬── W2 ──┬── W3 ──┬── W4 ──┬── W5 �
 ## 5.5 給組長 / 報告主筆的 next step 建議
 
 1. **本週**：把這份 docs/ 五個檔給組員看，確認沒人對「主打 roast」這件事退縮。
-2. **下週**：確認硬體取得（Jetson AGX Orin Nano 已確定；Intel RealSense L515 或備案）。
+2. **下週**：確認硬體取得（Jetson AGX Orin Nano 已確定；L515 借用或備案）。
 3. **W3 開工前**：跑一次「假動作 demo」——用 mock 資料 + multiprocessing.Queue 把整條 pipeline 走過一次，找出整合風險。
 4. **同步問老師**：「我們的 hook 是 humorous negative feedback，學術依據是 Comber & Thieme 2013（aversive affect 設計策略）+ Skurka 2018（幽默降低心理抗拒）+ Trujillo 2021（規範聚焦 nudge 同時引發正負情緒），您覺得 OK 嗎？」——避免到期末才被打槍。
