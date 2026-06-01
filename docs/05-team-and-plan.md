@@ -117,6 +117,6 @@ W1 ──┬── W2 ──┬── W3 ──┬── W4 ──┬── W5 �
 ## 5.5 給組長 / 報告主筆的 next step 建議
 
 1. **本週**：把這份 docs/ 五個檔給組員看，確認沒人對「主打 roast」這件事退縮。
-2. **下週**：確認硬體取得（Jetson AGX Orin Nano 已確定；L515 或備案）。
+2. **下週**：確認硬體取得（Jetson AGX Orin Nano 已確定；Intel RealSense L515 或備案）。
 3. **W3 開工前**：跑一次「假動作 demo」——用 mock 資料 + multiprocessing.Queue 把整條 pipeline 走過一次，找出整合風險。
 4. **同步問老師**：「我們的 hook 是 humorous negative feedback，學術依據是 Comber & Thieme 2013（aversive affect 設計策略）+ Skurka 2018（幽默降低心理抗拒）+ Trujillo 2021（規範聚焦 nudge 同時引發正負情緒），您覺得 OK 嗎？」——避免到期末才被打槍。

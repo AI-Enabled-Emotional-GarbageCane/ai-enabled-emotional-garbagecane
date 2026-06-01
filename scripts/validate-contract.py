@@ -48,6 +48,11 @@ def validate_contract_source() -> dict:
     require(contract.get("status") == "finalized", "contract status must be finalized")
     require(set(contract.get("modules", {})) == {"firmware", "vision", "display"}, "contract modules must be firmware, vision, display")
 
+    modules = contract["modules"]
+    require("l515_depth_distance_detection" in modules["firmware"].get("owns", []), "firmware must own l515_depth_distance_detection")
+    require("l515_camera_capture" in modules["vision"].get("owns", []), "vision must own l515_camera_capture")
+    require("l515_depth_distance_detection" in modules["display"].get("must_not_own", []), "display must not own l515_depth_distance_detection")
+
     events = {event.get("name"): event for event in contract.get("events", [])}
     require(set(events) == {"user_detected", "recognition_result"}, "contract must define user_detected and recognition_result")
 
@@ -85,6 +90,22 @@ def validate_docs(contract: dict) -> None:
     decisions = read_text("docs/decision-log.md")
     readme = read_text("README.md")
     system_design = read_text("docs/03-system-design.md")
+    report = read_text("docs/00-report.md")
+
+    searchable = {
+        "contracts/contract.v0.2.json": json.dumps(contract, ensure_ascii=False),
+        "README.md": readme,
+        "docs/api-contract.md": api,
+        "docs/fact-map.md": fact_map,
+        "docs/decision-log.md": decisions,
+        "docs/00-report.md": report,
+        "docs/03-system-design.md": system_design,
+    }
+    stale_upper = "D" + "435"
+    stale_lower = "d" + "435"
+    for path, text in searchable.items():
+        require_not_contains(text, stale_upper, path)
+        require_not_contains(text, stale_lower, path)
 
     for path, text in {
         "docs/api-contract.md": api,
