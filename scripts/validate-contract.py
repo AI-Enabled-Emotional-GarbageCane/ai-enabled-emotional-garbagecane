@@ -43,14 +43,16 @@ def require_not_contains(text: str, needle: str, path: str) -> None:
 
 
 def validate_contract_source() -> dict:
-    contract = read_json("contracts/contract.v0.2.json")
-    require(contract.get("contract_version") == "v0.2", "contract version must be v0.2")
+    contract = read_json("contracts/contract.v0.3.json")
+    require(contract.get("contract_version") == "v0.3", "contract version must be v0.3")
     require(contract.get("status") == "finalized", "contract status must be finalized")
     require(set(contract.get("modules", {})) == {"firmware", "vision", "display"}, "contract modules must be firmware, vision, display")
+    require(contract.get("hardware", {}).get("rgb_depth_camera") == "Intel RealSense L515", "hardware target must be Intel RealSense L515")
+    require(contract.get("vision_model", {}).get("family") == "YOLOv11n", "vision model family must be YOLOv11n")
 
     modules = contract["modules"]
     require("l515_depth_distance_detection" in modules["firmware"].get("owns", []), "firmware must own l515_depth_distance_detection")
-    require("l515_camera_capture" in modules["vision"].get("owns", []), "vision must own l515_camera_capture")
+    require("l515_rgb_capture" in modules["vision"].get("owns", []), "vision must own l515_rgb_capture")
     require("l515_depth_distance_detection" in modules["display"].get("must_not_own", []), "display must not own l515_depth_distance_detection")
 
     events = {event.get("name"): event for event in contract.get("events", [])}
@@ -81,6 +83,7 @@ def validate_contract_source() -> dict:
     require(invariants.get("lid_mechanism") is False, "lid_mechanism invariant must be false")
     require(invariants.get("display_to_firmware_public_flow") is False, "display_to_firmware_public_flow invariant must be false")
     require(invariants.get("class_values") == ["accept", "reject"], "class values must be accept/reject")
+    require(invariants.get("num_objects_policy") == "vision_v1_fixed_1", "v0.3 must document vision v1 num_objects policy")
     return contract
 
 
@@ -88,35 +91,56 @@ def validate_docs(contract: dict) -> None:
     api = read_text("docs/api-contract.md")
     fact_map = read_text("docs/fact-map.md")
     decisions = read_text("docs/decision-log.md")
+    agents = read_text("AGENTS.md")
     readme = read_text("README.md")
-    system_design = read_text("docs/03-system-design.md")
+    docs_readme = read_text("docs/README.md")
     report = read_text("docs/00-report.md")
+    system_design = read_text("docs/03-system-design.md")
+    interaction_design = read_text("docs/04-interaction-design.md")
+    team_plan = read_text("docs/05-team-and-plan.md")
 
     searchable = {
-        "contracts/contract.v0.2.json": json.dumps(contract, ensure_ascii=False),
+        "contracts/contract.v0.3.json": json.dumps(contract, ensure_ascii=False),
         "README.md": readme,
+        "AGENTS.md": agents,
+        "docs/README.md": docs_readme,
         "docs/api-contract.md": api,
         "docs/fact-map.md": fact_map,
         "docs/decision-log.md": decisions,
         "docs/00-report.md": report,
         "docs/03-system-design.md": system_design,
+        "docs/04-interaction-design.md": interaction_design,
+        "docs/05-team-and-plan.md": team_plan,
     }
-    stale_upper = "D" + "435"
-    stale_lower = "d" + "435"
     for path, text in searchable.items():
-        require_not_contains(text, stale_upper, path)
-        require_not_contains(text, stale_lower, path)
+        for stale in ["D435", "d435", "YOLOv8n", "YOLOv8"]:
+            require_not_contains(text, stale, path)
 
     for path, text in {
         "docs/api-contract.md": api,
         "docs/fact-map.md": fact_map,
         "docs/decision-log.md": decisions,
+        "AGENTS.md": agents,
+        "docs/03-system-design.md": system_design,
     }.items():
-        require_contains(text, "v0.2", path)
+        require_contains(text, "v0.3", path)
         require_contains(text, "q_detected", path)
         require_contains(text, "q_result", path)
         require_contains(text, "user_detected", path)
         require_contains(text, "recognition_result", path)
+        require_contains(text, "L515", path)
+        require_contains(text, "YOLOv11n", path)
+
+    for path, text in {
+        "README.md": readme,
+        "docs/README.md": docs_readme,
+        "docs/00-report.md": report,
+        "docs/04-interaction-design.md": interaction_design,
+        "docs/05-team-and-plan.md": team_plan,
+    }.items():
+        require_contains(text, "v0.3", path)
+        require_contains(text, "L515", path)
+        require_contains(text, "YOLOv11n", path)
 
     for event in contract["events"]:
         for field in event["required_fields"]:
@@ -129,11 +153,37 @@ def validate_docs(contract: dict) -> None:
     require_contains(readme, "無使用者按鈕", "README.md")
     require_contains(readme, "不做蓋子機構", "README.md")
     require_contains(readme, "multiprocessing.Queue", "README.md")
+    require_contains(readme, "L515", "README.md")
+    require_contains(readme, "YOLOv11n", "README.md")
     require_contains(system_design, '"event": "recognition_result"', "docs/03-system-design.md")
+    require_contains(system_design, "num_objects=1", "docs/03-system-design.md")
 
     require_not_contains(readme, "互動 Option 按鈕", "README.md")
     require_not_contains(readme, "讓使用者選擇 / 確認", "README.md")
     require_not_contains(readme, "依辨識結果觸發對應動作", "README.md")
+
+
+def validate_harness_files() -> None:
+    validate_ps1 = ROOT / "validate.ps1"
+    require(validate_ps1.exists(), "missing Windows validation entrypoint: validate.ps1")
+
+    agents = read_text("AGENTS.md")
+    require_contains(agents, "Windows", "AGENTS.md")
+    require_contains(agents, "PowerShell", "AGENTS.md")
+    require_contains(agents, ".\\validate.ps1", "AGENTS.md")
+
+
+def validate_presentation_script() -> None:
+    path = ROOT / "AI-情緒垃圾筒-講稿.md"
+    if not path.exists():
+        return
+
+    text = path.read_text(encoding="utf-8")
+    for stale in ["D435", "YOLOv8n", "6 週", "自訓 TTS"]:
+        require_not_contains(text, stale, "AI-情緒垃圾筒-講稿.md")
+    require_contains(text, "L515", "AI-情緒垃圾筒-講稿.md")
+    require_contains(text, "YOLOv11n", "AI-情緒垃圾筒-講稿.md")
+    require_contains(text, "8 週", "AI-情緒垃圾筒-講稿.md")
 
 
 def validate_subrepo_locks(contract: dict) -> None:
@@ -177,6 +227,8 @@ def main() -> None:
     contract = validate_contract_source()
     validate_docs(contract)
     validate_subrepo_locks(contract)
+    validate_harness_files()
+    validate_presentation_script()
     print("[OK] center contract, docs, and subrepo lock sources are consistent")
 
 

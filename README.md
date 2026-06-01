@@ -10,8 +10,8 @@
 
 ## 2. 技術
 
-- **AI 影像辨識**：以 Intel RealSense L515 camera capture 擷取互動場景，經訓練好的模型分類垃圾種類
-- **感測**：以 Intel RealSense L515 depth stream 距離感測偵測使用者靠近
+- **AI 影像辨識**：以 L515 RGB 擷取畫面，經 YOLOv11n binary classification 模型分類垃圾種類
+- **感測**：以 L515 depth 距離感測偵測使用者靠近
 - **推論輸出**：透過 Python `multiprocessing.Queue` 將辨識結果回饋至 display
 
 ## 3. 設備
@@ -19,7 +19,7 @@
 - **顯示螢幕**:呈現辨識結果與互動畫面
 - **全自動互動流程**:靠近、辨識、回饋皆自動完成，無使用者按鈕
 - **喇叭 / LED**:聲光回饋
-- **垃圾桶機構**:v0.2 不做蓋子機構，互動以語音、LED、螢幕為主
+- **垃圾桶機構**:v0.3 不做蓋子機構，互動以語音、LED、螢幕為主
 
 ## 4. 目標
 
@@ -27,15 +27,28 @@
 
 ---
 
-## 倉庫架構
+## Repo 分工與實際目錄
 
-本專案以 monorepo 為整合中心，各分工子系統獨立為 repo。
+本 repo 是**中心治理 repo**，負責整體說明、跨 repo 契約、Fact Map、決策紀錄與文件驗證。`vision`、`firmware`、`display` 是獨立 GitHub repo，**不會以子目錄形式放在本 repo 裡**。
+
+本 repo 的實際目錄：
+
+| 路徑 | 內容 |
+|------|------|
+| `AGENTS.md` | 中心 repo 的 agent / 維護指引 |
+| `docs/` | 實作前報告、跨 repo API 契約、Fact Map、Decision Log |
+| `contracts/` | machine-readable contract source 與子 repo lock 來源 |
+| `scripts/` | 中心契約驗證腳本 |
+| `validate.sh` | 中心 repo 驗證入口 |
+| `validate.ps1` | Windows PowerShell 驗證入口 |
+
+外部子 repo：
 
 | Repo | 內容 |
 |------|------|
-| [`ai-enabled-emotional-garbagecane`](https://github.com/AI-Enabled-Emotional-GarbageCane/ai-enabled-emotional-garbagecane)(本 repo) | Monorepo:整體說明、文件 (`docs/`)、跨 repo 契約與方向治理 |
+| [`ai-enabled-emotional-garbagecane`](https://github.com/AI-Enabled-Emotional-GarbageCane/ai-enabled-emotional-garbagecane)(本 repo) | 中心治理 repo：整體說明、文件、跨 repo 契約與方向治理 |
 | [`vision`](https://github.com/AI-Enabled-Emotional-GarbageCane/vision) | AI 影像辨識 + 資料整理 |
-| [`firmware`](https://github.com/AI-Enabled-Emotional-GarbageCane/firmware) | 硬體感測（Intel RealSense L515 depth 距離）+ LED |
+| [`firmware`](https://github.com/AI-Enabled-Emotional-GarbageCane/firmware) | 硬體感測（L515 depth 距離）+ LED |
 | [`display`](https://github.com/AI-Enabled-Emotional-GarbageCane/display) | 顯示 UI + 互動畫面 + 報告 |
 
 ## 分工

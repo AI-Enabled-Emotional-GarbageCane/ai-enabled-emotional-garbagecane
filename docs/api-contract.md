@@ -1,6 +1,6 @@
 # 跨 Repo API 契約
 
-> **v0.2 — 已定稿**。三模組全部運行於同一台 Jetson AGX Orin Nano，透過 Python `multiprocessing.Queue` 通訊。
+> **v0.3 — 已定稿**。三模組全部運行於同一台 Jetson AGX Orin Nano，透過 Python `multiprocessing.Queue` 通訊。
 
 ## 系統流程（全自動化）
 
@@ -11,7 +11,7 @@
          │ ① user_detected（via q_detected）
          ▼
 ┌─────────────────┐
-│     vision      │  L515 RGB/depth camera 擷取互動場景 → YOLOv8n 推論
+│     vision      │  L515 RGB 即時捕捉 → YOLOv11n 推論
 └────────┬────────┘
          │ ② recognition_result（via q_result）
          ▼
@@ -43,7 +43,7 @@
 | 通訊方式 | `multiprocessing.Queue`（命名為 `q_detected`） |
 | 事件名 | `user_detected` |
 | Payload | `{ "event": "user_detected", "distance_cm": <number>, "ts": <iso8601> }` |
-| 觸發條件 | L515 depth 串流偵測到物件／使用者距離 < 閾值（建議 30cm） |
+| 觸發條件 | L515 depth 串流偵測到物件距離 < 閾值（建議 30cm） |
 
 ### ② vision → display（推論結果）
 
@@ -56,8 +56,8 @@
 Payload 欄位說明：
 - `class`：binary 分類結果（`accept` = 一般垃圾、`reject` = 資源回收物/廚餘等）
 - `confidence`：模型信心值（0-1）
-- `num_objects`：YOLO 偵測到的物件數量
-- `snapshot_path`：L515 camera 快照的本機檔案路徑（供 display 紀錄用）
+- `num_objects`：v0.3 `vision` v1 固定輸出 `1`；欄位保留給未來 detection / foreground estimation 版本
+- `snapshot_path`：L515 RGB 快照的本機檔案路徑（供 display 紀錄用）
 
 ### ③ display → firmware（已移除）
 
@@ -78,14 +78,14 @@ TrashNet / RealWaste 原始多類標註重新映射至 binary。
 
 ### 多物件偵測規則
 
-`num_objects > 1` → 直接判定 `reject`，觸發專屬 roast。
+v0.3 `vision` v1 採 YOLOv11n classification，固定輸出 `num_objects=1`，不實作多物件偵測。`num_objects > 1` 的直接 `reject` 行為保留為未來 detection / foreground estimation 版本的規則。
 
 ### Confidence 處理（全自動，不問使用者）
 
 | 條件 | 行為 |
 |---|---|
 | `confidence ≥ 0.5` | 直接判定 accept/reject，觸發對應語音 |
-| `confidence < 0.5` | 播放自嘲語音（「我看不太出來欸」），不做 accept/reject 判定 |
+| `confidence < 0.5` | `vision` 仍送最佳猜測的 `class`；display 播放自嘲語音（「我看不太出來欸」），不採用該 class 做 accept/reject 判定 |
 
 不設「請使用者確認」流程，避免使用者欺騙系統。
 

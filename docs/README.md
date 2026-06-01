@@ -17,16 +17,19 @@
 
 ## 跨 repo 契約
 
+v0.3 定案為 Intel RealSense L515、YOLOv11n binary classification、Python `multiprocessing.Queue`、全自動流程。
+
 | 檔案 | 內容 |
 |---|---|
-| [api-contract.md](./api-contract.md) | `vision` ↔ `firmware` ↔ `display` 的事件流與 payload（**已依 §3.5 定稿，v0.2**）|
+| [api-contract.md](./api-contract.md) | `vision` ↔ `firmware` ↔ `display` 的事件流與 payload（**已依 §3.5 定稿，v0.3**）|
 | [fact-map.md](./fact-map.md) | 跨 repo 穩定事實、模組邊界、drift policy |
 | [decision-log.md](./decision-log.md) | 會影響三個 repo 的方向決策 |
-| [../contracts/contract.v0.2.json](../contracts/contract.v0.2.json) | machine-readable contract source |
+| [../contracts/contract.v0.3.json](../contracts/contract.v0.3.json) | machine-readable contract source |
 
 ## Harness 驗證
 
-- 中心 repo 修改後執行 `./validate.sh`
+- 中心 repo 修改後，macOS / Linux 執行 `./validate.sh`
+- Windows PowerShell 執行 `.\validate.ps1`
 - 子 repo 實際落地時，從 `contracts/subrepo-locks/` 取得對應 module 的 lock 來源
 - `contract.lock.json` 複製到子 repo 後，必須把 `source_commit` 改成中心 contract 所在 commit
 

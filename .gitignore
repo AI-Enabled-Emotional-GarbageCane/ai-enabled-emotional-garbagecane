@@ -4,3 +4,7 @@ image1.png
 
 # macOS
 .DS_Store
+
+# Office / export temp files
+.~lock.*
+*.tmp

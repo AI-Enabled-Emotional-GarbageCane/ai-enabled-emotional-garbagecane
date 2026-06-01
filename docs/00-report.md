@@ -9,20 +9,13 @@
 | 報告性質 | **實作前報告**（規劃與設計收斂，尚未進入實作） |
 | 預計時程 | 8 週（期末前 1-2 個月） |
 | 團隊規模 | 3 人 |
-| 文件版本 | v0.2 |
+| 文件版本 | v0.3 |
 
 ---
 
 ## 摘要
 
-本專題規劃打造一個結合 RGB-D 影像辨識與情緒互動回饋的「一般／可燃垃圾」專用智慧垃圾桶。
-系統採**全自動化設計**——使用者靠近後自動偵測、辨識、回饋，無需任何手動操作。
-系統由三個模組組成：`vision`（Intel RealSense L515 + YOLOv8n on Jetson AGX Orin Nano，
-輸出 accept / reject binary 判定）、`firmware`（距離感測、LED 燈號）、`display`
-（admin 控制面板、使用者端公告螢幕、語音反饋）。三模組以 Python `multiprocessing.Queue`
-在同一台 Jetson 上通訊。
-**核心差異化**在於：當投入物件被判定為 reject 時，系統自動觸發**團隊成員自錄的幽默化負向反饋語音**——
-這在既有的商業產品（Bin-e、TrashBot、Oscar）與學術專案中皆為空白。
+本專題規劃打造一個結合 RGB-D 影像辨識與情緒互動回饋的「一般／可燃垃圾」專用智慧垃圾桶。系統採**全自動化設計**——使用者靠近後自動偵測、辨識、回饋，無需任何手動操作。系統由三個模組組成：`vision`（Intel RealSense L515 + YOLOv11n on Jetson AGX Orin Nano，輸出 accept / reject binary 判定）、`firmware`（距離感測、LED 燈號）、`display`（admin 控制面板 + 使用者端公告螢幕 + 語音反饋）。三模組以 Python `multiprocessing.Queue` 在同一台 Jetson 上通訊。**核心差異化**在於：當投入物件被判定為 reject 時，系統自動觸發**團隊成員自錄的幽默化負向反饋語音**——這在既有的商業產品（Bin-e、TrashBot、Oscar）與學術專案中皆為空白。
 
 設計選擇有學術支撐：Fogg Behavior Model 的「即時 Trigger」、Comber & Thieme 2013 的「aversive affect 設計策略」、Skurka 2018 的「幽默訴求降低心理抗拒」、Trujillo 2021 的「規範聚焦 nudge 同時引發正負向情緒反應」、Berengueres 2013 的「emoticon-bin 回收率達 3 倍」。
 
@@ -47,7 +40,7 @@
 
 **現況**：市面上的 AI 智慧垃圾桶（Bin-e、TrashBot、Oscar）都在拼辨識準確率（90–97%），但互動層全是「中性 + 鼓勵」路線，沒有人在做情緒層的差異化。
 
-**解法**：用 YOLOv8n 做影像辨識，用**組員自錄的幽默 roast 語音**做即時負向回饋。全自動化流程——使用者靠近即啟動、丟入即判定、無需任何手動操作。理論基礎是 Fogg Behavior Model + Skurka 2018 幽默訴求 + Berengueres 2013 emoticon-bin（回收率 3 倍）+ parasocial 個人化。
+**解法**：用 YOLOv11n 做影像辨識，用**組員自錄的幽默 roast 語音**做即時負向回饋。全自動化流程——使用者靠近即啟動、丟入即判定、無需任何手動操作。理論基礎是 Fogg Behavior Model + Skurka 2018 幽默訴求 + Berengueres 2013 emoticon-bin（回收率 3 倍）+ parasocial 個人化。
 
 **為什麼是我們**：3 人團隊、8 週、學生預算；Jetson AGX Orin Nano 邊緣運算全自動化；學術論證硬，記憶點強，對外傳播性好。
 
@@ -57,13 +50,13 @@
 
 | 決策 | 選擇 | 為什麼 | 詳見 |
 |---|---|---|---|
-| AI 模型 | YOLOv8n / v11n | 同時得 bbox + label、Ultralytics 生態完整 | §3.2 |
+| AI 模型 | YOLOv11n classification | Binary classification 可快速落地，Ultralytics 生態完整 | §3.2 |
 | 訓練資料集 | TrashNet 主 + RealWaste 補 | 類別貼合 demo 場景；快速可訓 | §3.3 |
-| 硬體 | Intel RealSense L515（RGB-D/depth camera） + NVIDIA Jetson AGX Orin Nano | L515 camera input 給互動辨識 pipeline，Depth stream 給距離偵測；全部跑在同一台機器 | §3.4 |
+| 硬體 | Intel RealSense L515（RGB-D） + NVIDIA Jetson AGX Orin Nano | RGB 給推論、Depth 給 ROI 分割／距離偵測；全部跑在同一台機器 | §3.4 |
 | 通訊 | Python `multiprocessing.Queue` | 三模組同機運行，不需網路協定；簡單且低延遲 | §3.5 |
 | 類別 | binary（accept ／ reject） | 系統定位為「一般垃圾」專用桶；roast 場景單一化 | §3.5 |
 | 流程 | 全自動化，無使用者按鈕 | 靠近即偵測、丟入即判定、自動播語音；不做蓋子機構 | §3.5, §4.3 |
-| 多物件 | 直接 reject | 一次丟多個 = 沒分類 = 該被 roast | §3.5 |
+| 多物件 | v1 暫不判斷 | `vision` v1 固定 `num_objects=1`，未來 detection / foreground estimation 再啟用多物件 reject | §3.5 |
 | 回饋 | 幽默 roast 而非鼓勵 | Comber & Thieme 2013 + Skurka 2018 + Trujillo 2021 + Berengueres 2013 | §4.2 |
 | 聲音 | 組員自錄而非 TTS | Parasocial、社交存在感 | §4.1 |
 
@@ -74,7 +67,7 @@
 | 風險 | 退路 |
 |---|---|
 | Jetson 環境配置（JetPack / TensorRT）學習曲線過陡 | 預先完成環境驗證；臨時退路為筆電執行推論 |
-| L515 camera 取得或 driver 設定卡關 | 改用一般 USB Webcam + 外接超音波感測器替代 demo 距離偵測 |
+| L515 深度鏡頭借不到 | 改用一般 USB Webcam + 外接超音波感測器替代距離偵測 |
 | 老師質疑 roast 教育意義 | §4.2 學術引用直接搬到簡報前三頁 |
 | 組員不敢錄狠話 | 內容守則 §4.3.2，「中度吐槽」是 baseline |
 
@@ -95,7 +88,7 @@
 
 - [ ] 與全組對齊本份 docs/，正式簽收
 - [ ] 修正 `image1.png` 的「感測歸 vision」描述（應歸 firmware）
-- [ ] 採購硬體（Jetson AGX Orin Nano、Intel RealSense L515 或替代方案）
+- [ ] 採購硬體（Jetson AGX Orin Nano、L515 或替代方案）
 - [ ] 找老師確認「幽默 roast」的學術立場
 - [ ] 開始 Phase 2 PoC
 
