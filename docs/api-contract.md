@@ -6,12 +6,12 @@
 
 ```
 ┌─────────────────┐
-│    firmware     │  D435 depth 偵測使用者靠近（距離 < 閾值）
+│    firmware     │  L515 depth 偵測使用者靠近（距離 < 閾值）
 └────────┬────────┘
          │ ① user_detected（via q_detected）
          ▼
 ┌─────────────────┐
-│     vision      │  D435 RGB 即時捕捉 → YOLOv8n 推論
+│     vision      │  L515 RGB/depth camera 擷取互動場景 → YOLOv8n 推論
 └────────┬────────┘
          │ ② recognition_result（via q_result）
          ▼
@@ -43,7 +43,7 @@
 | 通訊方式 | `multiprocessing.Queue`（命名為 `q_detected`） |
 | 事件名 | `user_detected` |
 | Payload | `{ "event": "user_detected", "distance_cm": <number>, "ts": <iso8601> }` |
-| 觸發條件 | D435 depth 串流偵測到物件距離 < 閾值（建議 30cm） |
+| 觸發條件 | L515 depth 串流偵測到物件／使用者距離 < 閾值（建議 30cm） |
 
 ### ② vision → display（推論結果）
 
@@ -57,7 +57,7 @@ Payload 欄位說明：
 - `class`：binary 分類結果（`accept` = 一般垃圾、`reject` = 資源回收物/廚餘等）
 - `confidence`：模型信心值（0-1）
 - `num_objects`：YOLO 偵測到的物件數量
-- `snapshot_path`：D435 RGB 快照的本機檔案路徑（供 display 紀錄用）
+- `snapshot_path`：L515 camera 快照的本機檔案路徑（供 display 紀錄用）
 
 ### ③ display → firmware（已移除）
 

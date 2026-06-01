@@ -13,6 +13,6 @@
     "rename q_detected or q_result",
     "remove required recognition_result payload fields",
     "change class values away from accept/reject",
-    "take ownership of UI, voice playback, LED, or D435 depth trigger"
+    "take ownership of UI, voice playback, LED, or L515 depth trigger"
   ]
 }

@@ -12,6 +12,6 @@
     "ignore required recognition_result payload fields",
     "add public display-to-firmware flow",
     "add user confirmation button or lid mechanism to the public contract",
-    "take ownership of model inference or D435 depth trigger"
+    "take ownership of model inference or L515 depth trigger"
   ]
 }

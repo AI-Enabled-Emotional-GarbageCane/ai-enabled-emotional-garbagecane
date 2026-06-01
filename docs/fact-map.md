@@ -17,9 +17,9 @@
 
 | Module | Owns | Consumes | Must not own |
 |---|---|---|---|
-| `firmware` | D435 depth 距離感測、LED、`user_detected` | 無跨 repo event | 模型推論、UI、語音、使用者確認流程 |
-| `vision` | D435 RGB 串流、YOLO 推論、`recognition_result` | `user_detected` | 語音、UI、LED、硬體互動 |
-| `display` | 狀態機、roast/accept 語音、公告螢幕、admin panel、事件紀錄 | `recognition_result` | 模型推論、D435 depth 感測、public `display -> firmware` flow |
+| `firmware` | L515 depth 距離感測、LED、`user_detected` | 無跨 repo event | 模型推論、UI、語音、使用者確認流程 |
+| `vision` | L515 camera 輸入、YOLO 推論、`recognition_result` | `user_detected` | 語音、UI、LED、硬體互動 |
+| `display` | 狀態機、roast/accept 語音、公告螢幕、admin panel、事件紀錄 | `recognition_result` | 模型推論、L515 depth 感測、public `display -> firmware` flow |
 
 ## Event Contract
 

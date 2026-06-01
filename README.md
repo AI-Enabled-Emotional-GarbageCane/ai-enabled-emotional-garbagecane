@@ -10,8 +10,8 @@
 
 ## 2. 技術
 
-- **AI 影像辨識**：以 D435 RGB 擷取畫面，經訓練好的模型分類垃圾種類
-- **感測**：以 D435 depth 距離感測偵測使用者靠近
+- **AI 影像辨識**：以 RealSense L515 RGB/depth camera 擷取互動場景，經訓練好的模型分類垃圾種類
+- **感測**：以 RealSense L515 depth stream 距離感測偵測使用者靠近
 - **推論輸出**：透過 Python `multiprocessing.Queue` 將辨識結果回饋至 display
 
 ## 3. 設備
@@ -35,7 +35,7 @@
 |------|------|
 | [`ai-enabled-emotional-garbagecane`](https://github.com/AI-Enabled-Emotional-GarbageCane/ai-enabled-emotional-garbagecane)(本 repo) | Monorepo:整體說明、文件 (`docs/`)、跨 repo 契約與方向治理 |
 | [`vision`](https://github.com/AI-Enabled-Emotional-GarbageCane/vision) | AI 影像辨識 + 資料整理 |
-| [`firmware`](https://github.com/AI-Enabled-Emotional-GarbageCane/firmware) | 硬體感測（D435 depth 距離）+ LED |
+| [`firmware`](https://github.com/AI-Enabled-Emotional-GarbageCane/firmware) | 硬體感測（L515 depth 距離）+ LED |
 | [`display`](https://github.com/AI-Enabled-Emotional-GarbageCane/display) | 顯示 UI + 互動畫面 + 報告 |
 
 ## 分工
@@ -43,5 +43,5 @@
 |   人員   | 主要負責 | 具體工作 | Repo |
 |------|----------|----------|------|
 | 黃教丞 | AI 辨識 + 資料整理 | 收集垃圾圖片、訓練 / 測試模型、攝影機辨識垃圾、輸出辨識結果 | [`vision`](https://github.com/AI-Enabled-Emotional-GarbageCane/vision) |
-| 張世鵬 | 硬體感測 + LED | D435 depth 距離感測、LED 燈號、透過 `q_detected` 送出 `user_detected` | [`firmware`](https://github.com/AI-Enabled-Emotional-GarbageCane/firmware) |
+| 張世鵬 | 硬體感測 + LED | L515 depth 距離感測、LED 燈號、透過 `q_detected` 送出 `user_detected` | [`firmware`](https://github.com/AI-Enabled-Emotional-GarbageCane/firmware) |
 | 林欣螢 | 系統整合 + UI / 報告 | 接收 `q_result`、把 AI 結果接到畫面 / 語音、設計互動畫面、整理 README、簡報與影片 Demo | [`display`](https://github.com/AI-Enabled-Emotional-GarbageCane/display)、本 repo `docs/` |

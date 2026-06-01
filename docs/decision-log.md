@@ -18,11 +18,11 @@
 - Rationale: 專案定位為一般垃圾桶的互動教育 demo，不做完整回收分類機。
 - Impact: `vision` 輸出 binary 判定；`display` 的語音與狀態機只依 binary 結果分流。
 
-## D-003: D435 RGB/depth 分責
+## D-003: L515 camera/depth 分責
 
 - Status: Accepted
 - Contract: `v0.2`
-- Decision: D435 RGB 串流歸 `vision`，D435 depth 距離感測歸 `firmware`。
+- Decision: L515 camera 輸入歸 `vision`，L515 depth 距離感測歸 `firmware`。
 - Rationale: 保持模型推論與硬體感測責任分離。
 - Impact: `firmware` 不做模型推論；`vision` 不負責距離觸發與 LED。
 
