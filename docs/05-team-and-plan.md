@@ -78,7 +78,7 @@ W1 ──┬── W2 ──┬── W3 ──┬── W4 ──┬── W5 �
 
 | Owner | 任務 |
 |---|---|
-| Display | 把 vision Queue 接到狀態機；把 firmware Queue 接進來；三個 process 聯合啟動測試 |
+| Display | 把 `q_result` / `recognition_result` 接到狀態機；透過本機 Display bridge 讓瀏覽器即時觀看；三個 process 聯合啟動測試 |
 | Vision | 把 model 部署到 Jetson AGX Orin Nano（TensorRT engine）；測 latency |
 | Firmware | L515 depth 感測與 vision RGB 串流同時運行的穩定性測試；LED 固定在桶子上 |
 | 全員 | 第一次 end-to-end demo（W5 結束）；找 5-10 個同學試丟，紀錄 bug |
