@@ -6,7 +6,17 @@
 
 1. 先讀 `docs/api-contract.md`，確認目前採用的跨 repo contract version。
 2. 再讀 `docs/fact-map.md`，只把其中的跨 repo 事實當成穩定事實。
-3. 若要改事件流、payload、模組責任或全自動流程，必須同步更新 `docs/decision-log.md` 與 `contracts/contract.v*.json`。
+3. 若要進行實作或整合，先看 `docs/implementation-traces/README.md`，決定是否需要建立 trace。
+4. 若要改事件流、payload、模組責任或全自動流程，必須同步更新 `docs/decision-log.md` 與 `contracts/contract.v*.json`。
+
+## Implementation Trace Protocol
+
+- `AGENTS.md` 是 agent 入口；開始任何會影響跨 repo 整合、contract、validator、handoff 的實作前，先從 `docs/implementation-traces/TEMPLATE.md` 建立一份 trace。
+- Trace 命名使用 `docs/implementation-traces/YYYY-MM-DD-<module-or-area>-<short-topic>.md`。
+- 實作開始時先填 `Goal`、`Scope`、`Starting Context`；實作過程中持續補 `Implementation Steps`、`Decisions and Tradeoffs`、`Problems Encountered`。
+- 實作結束前必須補 `Files Changed`、`Verification`、`Follow-up`、`Rollback Notes`。
+- 如果後續發現前面判斷有問題，在同一份 trace 追加 `Revision Notes`；不要直接抹掉原本脈絡。
+- 子 repo 內部重構若不影響 public contract，可以只在子 repo 記錄；但只要牽涉 `q_detected`、`q_result`、`user_detected`、`recognition_result` 或跨 repo handoff，就要在中心 harness trace 留紀錄。
 
 ## 穩定契約
 

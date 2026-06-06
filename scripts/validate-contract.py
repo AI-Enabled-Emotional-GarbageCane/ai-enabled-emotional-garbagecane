@@ -168,9 +168,31 @@ def validate_harness_files() -> None:
     require(validate_ps1.exists(), "missing Windows validation entrypoint: validate.ps1")
 
     agents = read_text("AGENTS.md")
+    docs_readme = read_text("docs/README.md")
+    trace_readme = read_text("docs/implementation-traces/README.md")
+    trace_template = read_text("docs/implementation-traces/TEMPLATE.md")
     require_contains(agents, "Windows", "AGENTS.md")
     require_contains(agents, "PowerShell", "AGENTS.md")
     require_contains(agents, ".\\validate.ps1", "AGENTS.md")
+    require_contains(agents, "Implementation Trace Protocol", "AGENTS.md")
+    require_contains(agents, "docs/implementation-traces/TEMPLATE.md", "AGENTS.md")
+    require_contains(docs_readme, "Implementation Trace", "docs/README.md")
+    require_contains(docs_readme, "implementation-traces/README.md", "docs/README.md")
+
+    for path, text in {
+        "docs/implementation-traces/README.md": trace_readme,
+        "docs/implementation-traces/TEMPLATE.md": trace_template,
+    }.items():
+        for heading in [
+            "Goal",
+            "Scope",
+            "Implementation Steps",
+            "Problems Encountered",
+            "Verification",
+            "Follow-up",
+            "Revision Notes",
+        ]:
+            require_contains(text, heading, path)
 
 
 def validate_presentation_script() -> None:

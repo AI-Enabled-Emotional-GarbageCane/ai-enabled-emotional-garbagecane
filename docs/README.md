@@ -33,6 +33,13 @@ v0.3 定案為 Intel RealSense L515、YOLOv11n binary classification、Python `m
 - 子 repo 實際落地時，從 `contracts/subrepo-locks/` 取得對應 module 的 lock 來源
 - `contract.lock.json` 複製到子 repo 後，必須把 `source_commit` 改成中心 contract 所在 commit
 
+## Implementation Trace
+
+| 檔案 | 內容 |
+|---|---|
+| [implementation-traces/README.md](./implementation-traces/README.md) | 實作 trace 的使用時機、命名規則與最低必要段落 |
+| [implementation-traces/TEMPLATE.md](./implementation-traces/TEMPLATE.md) | 每次跨 repo / harness 實作可複製的 trace 範本 |
+
 ## 文件原則
 
 - 任何會被多個 repo 同時讀寫的「介面」、「協定」、「事件」都寫在這裡
