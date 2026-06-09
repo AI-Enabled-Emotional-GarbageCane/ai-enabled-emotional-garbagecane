@@ -1,0 +1,4 @@
+stage,metric,accuracy,note
+Public baseline,test top-1,85.6269121170044,"TrashNet + RealWaste, 50 epochs"
+Hard-negative experiment,test top-1,87.46177370030581,"Partial fine-tune, Colab stopped after epoch 9"
+Demo accept recall,best val top-1,87.776,"User accept seed fine-tune, best epoch 6"
